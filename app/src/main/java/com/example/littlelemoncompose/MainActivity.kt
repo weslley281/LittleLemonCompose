@@ -1,22 +1,27 @@
 package com.example.littlelemoncompose
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,40 +31,68 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Column(Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "Litle Lemon",
-                    fontSize = 32.sp,
-                    color = Color(0xFFF4CE14))
-                Text(
-                    stringResource(id = R.string.chicago),
-                    fontSize = 32.sp,
-                    color = Color(0xFFF4CE14))
-                Row() {
-                    Button(onClick = { /*TODO*/ },
-                        border = BorderStroke(1.dp, Color.Red),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
-                    ) {
-                        Text(text = stringResource(id = R.string.order))
-                    }
-                }
-            }
-
+            AppScreen();
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun AppScreen() {
+    var count by rememberSaveable() {
+        mutableStateOf(0)
+    }
+
+    ItemOrder(count, {count++}, {count--})
+}
+
+@Composable
+private fun ItemOrder(
+    count: Int,
+    OnIncrement: () -> Unit,
+    OnDecrement: () -> Unit
+    ){
+
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Salada Grega",
+            fontSize = 30.sp
+        )
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { OnDecrement() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.close),
+                    contentDescription = "Remove",
+                    Modifier.height(20.dp),
+                )
+            }
+
+            Text(
+                text = "$count",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(8.dp)
+            )
+
+            IconButton(onClick = { OnIncrement() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.add),
+                    contentDescription = "Add",
+                    Modifier.height(20.dp)
+                )
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     LittleLemonComposeTheme {
-        Greeting("Android")
+        AppScreen()
     }
 }
