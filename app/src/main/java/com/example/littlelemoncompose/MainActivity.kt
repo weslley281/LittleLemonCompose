@@ -31,60 +31,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppScreen();
+            HomeScreen();
         }
     }
 }
 
 @Composable
-fun AppScreen() {
-    var count by rememberSaveable() {
-        mutableStateOf(0)
-    }
+fun HomeScreen() {
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
 
-    ItemOrder(count, {count++}, {count--})
-}
-
-@Composable
-private fun ItemOrder(
-    count: Int,
-    OnIncrement: () -> Unit,
-    OnDecrement: () -> Unit
-    ){
-
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Salada Grega",
-            fontSize = 30.sp
-        )
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { OnDecrement() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.close),
-                    contentDescription = "Remove",
-                    Modifier.height(20.dp),
-                )
-            }
-
-            Text(
-                text = "$count",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(8.dp)
-            )
-
-            IconButton(onClick = { OnIncrement() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.add),
-                    contentDescription = "Add",
-                    Modifier.height(20.dp)
-                )
-            }
+    Scaffold(
+        scaffoldState = scaffoldState,
+        drawerContent = { DrawerPanel(scaffoldState = scaffoldState, scope = scope)},
+        topBar = {
+            TopAppBar(scaffoldState = scaffoldState, scope = scope)
+        }
+    ) {
+        Column() {
+            UpperPanel()
+            LowerPanel()
         }
     }
 }
@@ -93,6 +59,6 @@ private fun ItemOrder(
 @Composable
 fun DefaultPreview() {
     LittleLemonComposeTheme {
-        AppScreen()
+        HomeScreen()
     }
 }
